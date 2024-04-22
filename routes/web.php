@@ -43,7 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('register', [LoginController::class, 'register'])->name('register');
     Route::get('register', [LoginController::class, 'registerForm'])->name('registerForm');
 }); 
-
     Route::get('login', [LoginController::class, 'loginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login'])->name('loginStore');
 
