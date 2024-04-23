@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('teachers', TeacherController::class);
     Route::resource('enrollments', EnrollmentController::class);
     Route::resource('assignments', AssignmentController::class);
+    Route::get('profile' , [LoginController::class, 'profile'])->name('profile');
     //edituser
     Route::get('users/{id}/edit', [LoginController::class, 'edit'])->name('users.edit');
     Route::put('users/{id}', [LoginController::class, 'update'])->name('users.update');
@@ -42,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('users', [UserController::class, 'index'])->name('users');
     Route::post('register', [LoginController::class, 'register'])->name('register');
     Route::get('register', [LoginController::class, 'registerForm'])->name('registerForm');
-}); 
+});
     Route::get('login', [LoginController::class, 'loginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login'])->name('loginStore');
 

@@ -14,7 +14,7 @@
 @endif
 <div class="container">
   <h2>User Edit Form</h2>
-  <form action="{{route('users.update' , $user->id)}}" method="post">
+  <form action="{{route('users.update' , $user->id)}}" method="post" enctype="multipart/form-data">
     @method('PUT')
         @csrf
 
@@ -52,8 +52,17 @@
       <input type="password" class="form-control" id="password_confirmation"
       placeholder="Enter password" name="password_confirmation" value="{{$user->password}}">
     </div>
+      <div class="form-group">
+              <img src="{{url('storage/' . $user->image)}}" alt="User Image" width="100px">
+              <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" class="form-control" id="image" name="image" value="">
+                <!-- <input type="hidden" name="image" value="{{ $user->image }}"> -->
+              </div>
+
     <button type="submit" class="btn btn-default">Submit</button>
   </form>
+</div>
 </div>
 
 @endsection

@@ -14,7 +14,7 @@
 @endif
 <div class="container">
   <h2>User Register Form</h2>
-  <form action="{{route('register')}}" method="post">
+  <form action="{{route('register')}}" method="post" enctype="multipart/form-data">
         @csrf
 
     <div class="form-group">
@@ -50,6 +50,12 @@
       <input type="password" class="form-control" id="password_confirmation"
       placeholder="Enter password" name="password_confirmation">
     </div>
+
+
+      <div class="form-group">
+          <label for="storage">Image:</label>
+          <input type="file" class="form-control" id="image" name="image">
+      </div>
     <button type="submit" class="btn btn-default">Submit</button>
   </form>
 </div>
