@@ -8,7 +8,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use Intervention\Image\ImageManager;
-
+use Illuminate\Support\Str;
+// use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Mail;
 class LoginController extends Controller
 {
 
@@ -37,7 +39,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('auth.login');
+        return redirect('login');
     }
 
     //register
@@ -47,11 +49,17 @@ class LoginController extends Controller
         return view('auth.register');
     }
     public function register(Request $request)
+
+
     {
+        
+        $rawPassword = Str::random(8);
+        $password = Hash::make($rawPassword);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            // 'password' => 'required|string|min:8',
             'role' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
@@ -61,14 +69,21 @@ class LoginController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
-        $user->password = Hash::make($request->password);
+        $user->password = $password;
         $imageName = time().'.'.$request->image->extension();
         $image = ImageManager::gd()->read($request->image);
         $image->resize(100, 100);
         $image->save('profile/'.$imageName);
         $user->save();
     
+        //send mail after registration message confirm
 
+        Mail::send('mail' , ['user' => $user , 'password' => $rawPassword], function($message) use ($user){
+            $message->to($user->email);
+            $message->subject('Welcome to our website');
+        });
+
+        
         return redirect('users')->with('success', 'User created successfully');
     }
 
@@ -80,10 +95,14 @@ class LoginController extends Controller
     }
     //update user
     public function update(UserRequest $request,$id){
-        $imageName = time().'.'.$request->image->extension();
-        $request->image->move(public_path('storage'), $imageName);
-        $validated = $request->validated();
-        $validated['image'] = $imageName;
+        if ($request->hasFile('image')) {
+            $imageName = time().'.'.$request->image->extension();
+            $request->image->move(public_path('storage'), $imageName);
+            $validated = $request->validated();
+            $validated['image'] = $imageName;
+        } else {
+            $validated = $request->validated();
+        }
         $user = User::find($id);
         $user->update($validated);
         return redirect()->route('users');

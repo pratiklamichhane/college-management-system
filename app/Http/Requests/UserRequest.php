@@ -28,8 +28,7 @@ class UserRequest extends FormRequest
             'password' => 'required|string',
             'role' => 'required|string',
             'password_confirmation' => 'required|string|same:password',
-
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => $this->has('image') ? 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048' : '',
         ];
     }
 }

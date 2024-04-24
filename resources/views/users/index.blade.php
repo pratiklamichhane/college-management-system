@@ -1,7 +1,4 @@
-@extends('layouts.master')
-@section('title', 'Dashboard')
 
-@section('content')
 @extends('layouts.master')
 @section('title', 'Departments')
 @section('content')
@@ -62,5 +59,4 @@
       </div>
       <!-- /.row -->
     </section>
-@endsection
 @endsection
