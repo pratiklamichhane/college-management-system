@@ -53,11 +53,10 @@
       placeholder="Enter password" name="password_confirmation" value="{{$user->password}}">
     </div>
       <div class="form-group">
-              <img src="{{url('storage/' . $user->image)}}" alt="User Image" width="100px">
+              <img src="{{url('storage/'. $user->image)}}" alt="User Image" width="100px">
               <div class="form-group">
                 <label for="image">Image:</label>
                 <input type="file" class="form-control" id="image" name="image" value="">
-                <!-- <input type="hidden" name="image" value="{{ $user->image }}"> -->
               </div>
 
     <button type="submit" class="btn btn-default">Submit</button>

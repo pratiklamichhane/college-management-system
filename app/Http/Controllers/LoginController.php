@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
-// use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+// use App\Mail\WelcomeMail
+
 class LoginController extends Controller
 {
 
@@ -48,23 +50,14 @@ class LoginController extends Controller
     {
         return view('auth.register');
     }
-    public function register(Request $request)
+    public function register(UserRequest $request)
 
 
     {
         
+        $validated = $request->validated(); 
         $rawPassword = Str::random(8);
         $password = Hash::make($rawPassword);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            // 'password' => 'required|string|min:8',
-            'role' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-
-        ]);
-
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -73,8 +66,11 @@ class LoginController extends Controller
         $imageName = time().'.'.$request->image->extension();
         $image = ImageManager::gd()->read($request->image);
         $image->resize(100, 100);
-        $image->save('profile/'.$imageName);
-        $user->save();
+        Storage::disk('public')->put($imageName, $image->encode());
+        $validated['image'] = $imageName;
+        
+        //user create
+        $user->create($validated);  
     
         //send mail after registration message confirm
 
@@ -96,10 +92,12 @@ class LoginController extends Controller
     //update user
     public function update(UserRequest $request,$id){
         if ($request->hasFile('image')) {
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('storage'), $imageName);
-            $validated = $request->validated();
-            $validated['image'] = $imageName;
+        $imageName = time().'.'.$request->image->extension();
+        $image = ImageManager::gd()->read($request->image);
+        $image->resize(100, 100);
+        Storage::disk('public')->put($imageName, $image->encode());
+        $validated = $request->validated();
+        $validated['image'] = $imageName;
         } else {
             $validated = $request->validated();
         }
